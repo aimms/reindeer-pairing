@@ -1,0 +1,33 @@
+:root {
+  --primaryLight: #FDFCEF;
+  --primary: #C7EDE6;
+  --primaryDark: #1DC1A3;
+  --primaryDarker: #127260;
+  --secondary: #EE3E54;
+  --secondary2: #e9818d;
+
+
+  --bg_app-logo: 15px 50% / 50px 50px no-repeat url(/app-resources/resources/images/santa_logo.png);
+  --spacing_app-logo_width: 65px;
+
+  --color_border-divider_themed: var(--primaryDark);
+  --color_text_edit-select-link: var(--primaryDarker);
+  --color_text_edit-select-link_hover: var(--primary);
+  --color_bg_edit-select-link_inverted: var(--secondary);
+
+  --color_bg_button_primary: var(--primaryDark);
+  --color_text_button_primary: white;
+  --border_button_primary: 1px solid var(--primaryDark);
+
+  --color_bg_button_primary_hover: var(--primary);
+  --color_text_button_primary_hover: var(--primaryDarker);
+  --border_button_primary_hover: 1px solid var(--primaryDarker);
+
+  --color_text_button_secondary: var(--secondary);
+  --border_button_secondary: 1px solid var(--secondary);
+  --color_text_button_secondary_hover: var(--primaryDarker);
+  --border_button_secondary_hover: 1px solid var(--primaryDarker);
+
+  --color_bg_widget-header: var(--primaryDarker);
+  --border_widget-header: 3px solid var(--primaryDark);
+}

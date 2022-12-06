@@ -1,0 +1,336 @@
+## ams_version=1.0
+
+Model Main_ReindeerPairing {
+	Comment: {
+		"Original problem descritpion at http://orbythebeach.wordpress.com/2011/12/20/how-should-santa-pair-up-his-reindeer/
+		
+		Perhaps
+		http://webclipart.about.com/od/holida1/ss/How-Do-Those-Reindeer-Fly.htm
+		can be used for a background picture when presenting the solutions in the GUI.
+		
+		Keywords:
+		Stable marriage problem, network object, constraint programming, channel constraint, if-then constraint."
+	}
+	Section Data_Model {
+		Section Quantities_and_Units {
+			Comment: {
+				"This section contains all the units and quantities that are added automatically by AIMMS.
+				It is recommended to declare all your quantities here."
+			}
+			Quantity SI_Time_Duration {
+				BaseUnit: s;
+				Conversions: minute->s : #-># * 60;
+				Comment: {
+					"Expresses the value for the duration of periods.
+					
+					The unit s has been added automatically because it is a required unit for AimmsWebUI.
+					
+					The unit minute has been added automatically because it is a required unit for AimmsWebUI."
+				}
+			}
+		}
+		Section Inputs {
+			Set s_reindeers {
+				Index: i_deer;
+				Definition: s_leftys + s_rightys + 'Rudolph';
+			}
+			Set s_leftys {
+				SubsetOf: s_reindeers;
+				Index: i_left;
+				Parameter: ep_left;
+				Definition: data { Dasher, Prancer, Comet, Donner };
+				Comment: "The names of the reindeer on the left.";
+			}
+			Set s_rightys {
+				SubsetOf: s_reindeers;
+				Index: i_right;
+				Definition: data { Dancer, Vixen, Cupid, Blitzen };
+			}
+			Set s_leftReindeerForHisRight {
+				IndexDomain: (i_left);
+				SubsetOf: s_rightys;
+				OrderBy: User;
+				Definition: {
+					data {
+					 Dasher   : { Dancer,  Cupid,   Vixen,   Blitzen },
+					 Prancer  : { Vixen,   Blitzen, Dancer,  Cupid   },
+					 Comet    : { Cupid,   Dancer,  Blitzen, Vixen   },
+					 Donner   : { Blitzen, Vixen,   Dancer,  Cupid   } }
+				}
+				Comment: {
+					"For each reindeer on the left, an ordered specification of which reindeer it favors to be next to.
+					The keyword \'user\' in the order by attribute indicates that the element ordering is meaningful."
+				}
+			}
+			Set s_rightReindeerForHisLeft {
+				IndexDomain: (i_right);
+				SubsetOf: s_leftys;
+				OrderBy: User;
+				Definition: {
+					data {
+					  Dancer  : { Prancer, Comet,   Dasher,  Donner },
+					  Vixen   : { Dasher,  Donner,  Prancer, Comet  },
+					  Cupid   : { Prancer, Dasher,  Comet,   Donner },
+					  Blitzen : { Comet,   Prancer, Donner,  Dasher } }
+				}
+				Comment: "For each reindeer on the right, an ordered specification of which reindeer it favors to be next to.";
+			}
+			Parameter p_def_preferenceRankLefty {
+				IndexDomain: (i_left,i_right);
+				Definition: ord(i_right, s_leftReindeerForHisRight(i_left));
+				Comment: "An intermediate parameter, translating the ordering in favRighty into numbers.";
+			}
+			Parameter p_def_preferenceRankRighty {
+				IndexDomain: (i_right,i_left);
+				Definition: ord(i_left, s_rightReindeerForHisLeft(i_right));
+			}
+			StringParameter sp_def_imageReference {
+				IndexDomain: i_deer;
+				Definition: {
+					data 
+					{ Dasher  : "Dasher.png" ,  Prancer : "Prancer.png",  Comet   : "Comet.png"  ,  Donner  : "Donner.png" ,
+					  Dancer  : "Dancer.png" ,  Vixen   : "Vixen.png"  ,  Cupid   : "Cupid.png"  ,  Blitzen : "Blitzen.png",
+					  Rudolph : "Rudolph.png" }
+				}
+			}
+		}
+		Section Math_Model {
+			Procedure pr_solveReindeerPairing {
+				Body: {
+					! Call the CP solver to find all possible solutions and store them in the
+					! solution repository of the generated mathematical program 'mp_stableReindeerPairings'
+					empty Outputs, Math_Model;
+					
+					option 'cpoptimizer 22.1'.'solution_storage_limit' := 1000 ;
+					solve mp_stableReindeerPairings where solution_limit := 1000, time_limit := 10 ;
+					
+					! Visit each solution in the solution repository of that generated mathematical program
+					! and store these solutions in element parameters.
+					! These element parameters can then be displayed in the GUI.
+					ep_loc_generatedModel := 'mp_stableReindeerPairings';
+					s_solutionSet := gmp::Solution::GetSolutionsSet(ep_loc_generatedModel);
+					
+					for (i_sols) do
+						GMP::Solution::SendToModel(ep_loc_generatedModel, i_sols);
+						ep_variousLeftPartners(i_sols,i_right)  := ev_leftPartner(i_right);
+						ep_variousRightPartners(i_sols,i_left) := ev_rightPartner(i_left);
+					endfor;
+					
+					ep_viewedSolution := first(i_sols);
+					pr_changeImages;
+				}
+				ElementParameter ep_loc_generatedModel {
+					Range: AllGeneratedMathematicalPrograms;
+				}
+			}
+			Variable v_objectiveFunction {
+				Range: free;
+			}
+			ElementVariable ev_rightPartner {
+				IndexDomain: (i_left);
+				Range: s_rightys;
+				Comment: "For each reindeer on the left, which reindeer on the right will it be pulling the sleigh next to.";
+			}
+			ElementVariable ev_leftPartner {
+				IndexDomain: (i_right);
+				Range: s_leftys;
+			}
+			Constraint c_matchEachUniquely {
+				Definition: {
+					cp::Channel(
+						mapBinding        :  i_left,
+						map               :  ev_rightPartner(i_left),
+						inverseMapBinding :  i_right,
+						inverseMap        :  ev_leftPartner(i_right))
+				}
+				Comment: {
+					"The channel constraint enforces both:
+					- leftPartner(rightPartner(iL)) = iL for all iL, and
+					- rightPartner(leftPartner(iR)) = iR for all iR.
+					
+					The channel constraint allows us to view the problem equivalently from the left perspective and from the right perspective:
+					- The left  perspective: the problem is to assign to each reindeer on the left  a reindeer on the right
+					- The right perspective: the problem is to assign to each reindeer on the right a reindeer on the left.
+					
+					The channel constraint is present in many constraint programming systems (though perhaps with different names).
+					The global constraint catalog provides an overview:
+					   http://www.emn.fr/z-info/sdemasse/gccat/Cinverse.html"
+				}
+			}
+			Constraint c_leftStable {
+				IndexDomain: (i_left,i_right);
+				Definition: {
+					if p_def_preferenceRankLefty( i_left, i_right ) < p_def_preferenceRankLefty( i_left, ev_rightPartner( i_left ) ) then
+					   p_def_preferenceRankRighty( i_right, ev_leftPartner( i_right ) ) < p_def_preferenceRankRighty( i_right, i_left )
+					endif
+				}
+				Comment: {
+					"In a stable solution the following should hold:
+					for each reindeer on the left iL,
+					    if iL prefers reindeer on the right iR to her currently assigned partner rightPartner( iL ) then
+					    that reindeer iR does NOT prefer iL as her partner on the left."
+				}
+			}
+			Constraint c_rightStable {
+				IndexDomain: (i_left,i_right);
+				Definition: {
+					if p_def_preferenceRankRighty( i_right, i_left ) < p_def_preferenceRankRighty( i_right, ev_leftPartner( i_right ) ) then
+					   p_def_preferenceRankLefty( i_left, ev_rightPartner( i_left ) ) < p_def_preferenceRankLefty( i_left, i_right )
+					endif
+				}
+			}
+			MathematicalProgram mp_stableReindeerPairings {
+				Direction: minimize;
+				Constraints: AllConstraints;
+				Variables: AllVariables;
+				Type: Automatic;
+			}
+		}
+		Section Outputs {
+			Set s_solutionSet {
+				SubsetOf: Integers;
+				Index: i_sols;
+			}
+			ElementParameter ep_variousLeftPartners {
+				IndexDomain: (i_sols,i_right);
+				Range: s_leftys;
+				webui::FlagsIdentifier: sp_readOnlyFlag;
+			}
+			ElementParameter ep_variousRightPartners {
+				IndexDomain: (i_sols,i_left);
+				Range: s_rightys;
+				webui::FlagsIdentifier: sp_readOnlyFlag;
+			}
+		}
+	}
+	Section UI_Declarations {
+		Procedure pr_empty;
+		StringParameter sp_logo {
+			InitialData: "aimms_logo.png";
+		}
+		Section Workflow {
+			StringParameter sp_myWorkflows {
+				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
+			}
+			StringParameter sp_myWorkflowSteps {
+				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
+				Definition: {
+					data 
+					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
+					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "welcome"            ,
+					  ( 1, 1, workflowPageState ) : "active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 1, redirectPageId    ) : "home"               ,  ( 1, 2, displayText       ) : "Story"              ,
+					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "story"              ,
+					  ( 1, 2, tooltip           ) : "Problem description",  ( 1, 2, workflowPageState ) : "active"             ,
+					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
+					  ( 1, 3, displayText       ) : "Pairing"            ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
+					  ( 1, 3, pageId            ) : "pairing"            ,  ( 1, 3, tooltip           ) : "Pairing results"    ,
+					  ( 1, 3, workflowPageState ) : "active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 3, redirectPageId    ) : "home"                }
+				}
+			}
+		}
+		Section Pages {
+			Section Pairing_Pages {
+				Procedure pr_changeImages {
+					Body: {
+						! top are left and bottom are right
+						ep_left := first(i_left);
+						
+						sp_1Top := sp_def_imageReference(ep_left);
+						sp_1Bottom := sp_def_imageReference(ep_variousRightPartners(ep_viewedSolution, ep_left));
+						
+						ep_left += 1;
+						sp_2Top := sp_def_imageReference(ep_left);
+						sp_2Bottom := sp_def_imageReference(ep_variousRightPartners(ep_viewedSolution, ep_left));
+						
+						ep_left += 1;
+						sp_3Top := sp_def_imageReference(ep_left);
+						sp_3Bottom := sp_def_imageReference(ep_variousRightPartners(ep_viewedSolution, ep_left));
+						
+						ep_left += 1;
+						sp_4Top := sp_def_imageReference(ep_left);
+						sp_4Bottom := sp_def_imageReference(ep_variousRightPartners(ep_viewedSolution, ep_left));
+						
+						sp_5 := sp_def_imageReference('Rudolph');
+					}
+				}
+				Parameter p_numberOfSolutions {
+					Definition: card(s_solutionSet);
+				}
+				ElementParameter ep_viewedSolution {
+					Range: s_solutionSet;
+					InitialData: '';
+					webui::UponChangeProcedure: pr_changeImages;
+				}
+				StringParameter sp_santa {
+					Definition: "santa_inv.png";
+				}
+				StringParameter sp_1Top;
+				StringParameter sp_1Bottom;
+				StringParameter sp_2Top;
+				StringParameter sp_2Bottom;
+				StringParameter sp_3Top;
+				StringParameter sp_3Bottom;
+				StringParameter sp_4Top;
+				StringParameter sp_4Bottom;
+				StringParameter sp_5;
+				DeclarationSection Pairing_Widget_Action {
+					StringParameter sp_pairingWidgetActions {
+						IndexDomain: (webui::indexPageExtension,webui::indexWidgetActionSpec);
+						Definition: {
+							data 
+							{ ( 1, displaytext ) : "Fill SQL Table" ,  ( 1, icon        ) : "aimms-database-export"   ,  ( 1, procedure   ) : "pr_fillDatabase",
+							  ( 1, state       ) : "active"          }
+						}
+					}
+				}
+				Section DirectSQL_Export {
+					Procedure pr_fillDatabase {
+						Body: {
+							sp_loc_datasource
+							:=  SQLCreateConnectionString (
+							        DatabaseInterface              :  'odbc',
+							        DriverName                     :  "SQLite3 ODBC Driver", !Your local drive
+							        ServerName                     :  "", 
+							        DatabaseName                   :  "pairing.db", !The path of your database
+							        UserId                         :  "", 
+							        Password                       :  "", 
+							        AdditionalConnectionParameters :  "");
+							
+							!delete all
+							DirectSQL(sp_loc_datasource, "delete from possible_pairs;");
+							
+							!and fill again
+							for (i_sols, i_left) | ep_variousRightPartners(i_sols, i_left) do
+							    sp_loc_insertCommand 
+							    :=  FormatString("INSERT INTO possible_pairs (solution,left,right) values ('%e','%e','%e');",
+							                    i_sols, i_left, ep_variousRightPartners(i_sols, i_left));
+							
+							    DirectSQL(sp_loc_datasource, sp_loc_insertCommand);
+							endfor ;
+						}
+						StringParameter sp_loc_insertCommand;
+						StringParameter sp_loc_datasource;
+					}
+				}
+			}
+		}
+		Section FlagsIdentifier {
+			StringParameter sp_readOnlyFlag {
+				Definition: "readonly";
+			}
+		}
+	}
+	Procedure MainInitialization;
+	Procedure MainExecution {
+		Body: {
+			pr_solveReindeerPairing;
+		}
+	}
+	Procedure MainTermination {
+		Body: {
+			return 1;
+		}
+	}
+}

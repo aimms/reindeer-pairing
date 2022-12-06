@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.aimms.com/aimms/customer-support/examples/application-examples/reindeer-pairing.git
+git remote add origin https://gitlab.aimms.com/aimms/customer-support/examples/functional-examples/reindeer-pairing.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.aimms.com/aimms/customer-support/examples/application-examples/reindeer-pairing/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.aimms.com/aimms/customer-support/examples/functional-examples/reindeer-pairing/-/settings/integrations)
 
 ## Collaborate with your team
 
