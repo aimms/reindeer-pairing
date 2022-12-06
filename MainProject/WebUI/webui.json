@@ -462,6 +462,34 @@
       ]
     }
   },
+  "pages/story": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_story",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_story"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout11"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_story",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "widgets/btn_runOptimization": {
     "action": {
       "literal": {
@@ -749,6 +777,17 @@
           }
         ]
       }
+    }
+  },
+  "widgets/txt_story": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><span style=\"font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">This AIMMS project is an illustration of the stable marriage problem (STEM).&nbsp;Every Christmas Santa is as always busy with preparations before his longer-than-7.5-million-kilometer trip around the world.&nbsp;One of the many things he has to worry about is how to pair up his reindeer in front of the sleigh.&nbsp;We all know that Rudolf goes right in front of everyone else because of his shiny nose, but what about his other eight four-legged friends?&nbsp;The traditional Christmas carols tell us that the reindeer are typically arranged in four pairs, front to back, as follows:</span></div><div><br></div><ul><li><span style=\"font-size: 18px;\">Dasher, Dancer</span></li><li><span style=\"font-size: 18px;\">Prancer, Vixen</span></li><li><span style=\"font-size: 18px;\">Comet, Cupid</span></li><li><span style=\"font-size: 18px;\">Donner, Blitzen</span></li></ul><div><br></div><div><span style=\"font-size: 18px;\">Therefore, we are going to assume that this is an arrangement that works pretty well (after all it’s been working since 1823). However Santa kept thinking: \"Are there other good ways to pair up my reindeers?”.&nbsp;Santa was kind enough to provide the following lists of pairing preferences for each of his reindeer.&nbsp;The names in each list are sorted in decreasing order of pairing preference. The lefties appear in bold, while the righties appear in italic.</span></div><div><br></div><ul><li><b style=\"font-size: 18px;\">Dasher</b><span style=\"font-size: 18px;\">: </span><i style=\"font-size: 18px;\">Dancer, Cupid, Vixen, Blitzen</i></li><li><b style=\"font-size: 18px;\">Prancer</b><span style=\"font-size: 18px;\">: </span><i style=\"font-size: 18px;\">Vixen, Blitzen, Dancer, Cupid</i></li><li><b style=\"font-size: 18px;\">Comet</b><span style=\"font-size: 18px;\">: </span><i style=\"font-size: 18px;\">Cupid, Dancer, Blitzen, Vixen</i></li><li><b style=\"font-size: 18px;\">Donner</b><span style=\"font-size: 18px;\">: </span><i style=\"font-size: 18px;\">Blitzen, Vixen, Dancer, Cupid</i></li><li><i style=\"font-size: 18px;\">Dancer</i><span style=\"font-size: 18px;\">: </span><b style=\"font-size: 18px;\">Prancer, Comet, Dasher, Donner</b></li><li><i style=\"font-size: 18px;\">Vixen</i><span style=\"font-size: 18px;\">: </span><b style=\"font-size: 18px;\">Dasher, Donner, Prancer, Comet</b></li><li><i style=\"font-size: 18px;\">Cupid</i><span style=\"font-size: 18px;\">: </span><b style=\"font-size: 18px;\">Prancer, Dasher, Comet, Donner</b></li><li><i style=\"font-size: 18px;\">Blitzen</i><span style=\"font-size: 18px;\">: </span><b style=\"font-size: 18px;\">Comet, Prancer, Donner, Dasher</b></li></ul><div><br></div><div><span style=\"font-size: 18px;\">What Santa would like to know is whether or not there are other good pairings in addition to the traditional one. If so, he can add some variety to his line-up and the reindeer won’t get so bored by galloping side-by-side with the same companion every year.</span></div>"
+    },
+    "name": {
+      "literal": "txt_story"
     }
   },
   "widgets/txt_welcome": {
