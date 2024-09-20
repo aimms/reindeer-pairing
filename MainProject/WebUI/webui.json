@@ -4,6 +4,27 @@
     "aimms.widget.type": {
       "literal": "application"
     },
+    "browser.language": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserLanguage"
+        ]
+      }
+    },
+    "browser.name": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browser.timezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
     "browsername": {
       "aimms": {
         "contents": [
@@ -699,6 +720,9 @@
     },
     "title": {
       "literal": "Viewed Solution"
+    },
+    "views": {
+      "literal": {}
     }
   },
   "widgets/tbl_results": {
@@ -753,6 +777,9 @@
     },
     "title": {
       "literal": "All Solutions"
+    },
+    "views": {
+      "literal": {}
     },
     "widgetactions": {
       "aimms": {
