@@ -88,9 +88,9 @@ Model Main_ReindeerPairing {
 				IndexDomain: i_deer;
 				Definition: {
 					data 
-					{ Dasher  : "Dasher.png" ,  Prancer : "Prancer.png",  Comet   : "Comet.png"  ,  Donner  : "Donner.png" ,
-					  Dancer  : "Dancer.png" ,  Vixen   : "Vixen.png"  ,  Cupid   : "Cupid.png"  ,  Blitzen : "Blitzen.png",
-					  Rudolph : "Rudolph.png" }
+					{ Dasher  : "dasher.png" ,  Prancer : "prancer.png",  Comet   : "comet.png"  ,  Donner  : "donner.png" ,
+					  Dancer  : "dancer.png" ,  Vixen   : "vixen.png"  ,  Cupid   : "cupid.png"  ,  Blitzen : "blitzen.png",
+					  Rudolph : "rudolph.png" }
 				}
 			}
 		}
@@ -102,6 +102,16 @@ Model Main_ReindeerPairing {
 					empty Outputs, Math_Model;
 					
 					option 'cpoptimizer 22.1'.'solution_storage_limit' := 1000 ;
+					
+					if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
+					   if pro::DelegateToServer(
+					            waitForCompletion  :  1,
+					            completionCallback :  'pro::session::LoadResultsCallBack' )
+					   then
+					      return 1;
+					   endif;
+					endif;
+					
 					solve mp_stableReindeerPairings where solution_limit := 1000, time_limit := 10 ;
 					
 					! Visit each solution in the solution repository of that generated mathematical program
