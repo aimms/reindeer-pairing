@@ -1,36 +1,46 @@
-# reindeer-pairing
+# Reindeer Pairing Model 
 
-![WebUI](https://img.shields.io/badge/UI-WebUI-success)
+[![Downloads](https://img.shields.io/github/downloads/aimms/reindeer-pairing/total?style=for-the-badge&logo=github&labelColor=000081&color=1847c9)](https://github.com/aimms/reindeer-pairing/releases)
+![AIMMS Version](https://img.shields.io/badge/AIMMS-24.5-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![WebUI Version](https://img.shields.io/badge/WebUI-24.10.3.3-white?style=for-the-badge&labelColor=009B00&color=00D400)
 
-**Mirrored in:** https://github.com/aimms/reindeer-pairing
 
-**How-to:** https://how-to.aimms.com/Articles/434/434-reindeer-pairing.html
+This repository contains a functional AIMMS illustration of the **Stable Marriage Problem** (specifically the Stable Reindeer Pairing). It demonstrates how to pair "lefty" and "righty" reindeer in front of Santa's sleigh based on their individual preferences to ensure a stable and happy lineup.
 
-## Story
+## 🎯 Business Problem
 
-This AIMMS project is an illustration of the stable marriage problem (STEM). 
-Every Christmas Santa is as always busy with preparations before his longer-than-7.5-million-kilometer trip around the world. 
-One of the many things he has to worry about is how to pair up his reindeer in front of the sleigh. 
-We all know that Rudolf goes right in front of everyone else because of his shiny nose, but what about his other eight four-legged friends? 
-The traditional Christmas carols tell us that the reindeer are typically arranged in four pairs, front to back, as follows:
+The stable marriage problem is a classic optimization challenge in matching theory. In this festive scenario, Santa needs to find pairings where:
+- **Stability:** No two reindeer would both prefer each other over their current assigned partners.
+- **Preference Optimization:** Reindeer are matched based on ranked preference lists.
+- **Variety:** Finding multiple stable solutions to allow Santa to vary the lineup year after year so the reindeer don't get bored.
 
-- Dasher, Dancer
-- Prancer, Vixen
-- Comet, Cupid
-- Donner, Blitzen
+## 📖 How to Use This Example
 
-Therefore, we are going to assume that this is an arrangement that works pretty well (after all it’s been working since 1823). However Santa kept thinking: "Are there other good ways to pair up my reindeers?”. 
-Santa was kind enough to provide the following lists of pairing preferences for each of his reindeer. 
-The names in each list are sorted in decreasing order of pairing preference. The lefties appear in bold, while the righties appear in italic.
+To get the most out of this model, we highly recommend reading our detailed step-by-step guide on the AIMMS How-to website:
 
-- **Dasher**: *Dancer, Cupid, Vixen, Blitzen*
-- **Prancer**: *Vixen, Blitzen, Dancer, Cupid*
-- **Comet**: *Cupid, Dancer, Blitzen, Vixen*
-- **Donner**: *Blitzen, Vixen, Dancer, Cupid*
-- *Dancer*: **Prancer, Comet, Dasher, Donner**
-- *Vixen*: **Dasher, Donner, Prancer, Comet**
-- *Cupid*: **Prancer, Dasher, Comet, Donner**
-- *Blitzen*: **Comet, Prancer, Donner, Dasher**
+👉 **[Read the Full Article: Reindeer Pairing Guide](https://how-to.aimms.com/Articles/1370/reindeer-pairing.html)**
 
-What Santa would like to know is whether or not there are other good pairings in addition to the traditional one. 
-If so, he can add some variety to his line-up and the reindeer won’t get so bored by galloping side-by-side with the same companion every year.
+### Prerequisites
+- **AIMMS:** You will need AIMMS installed to run the model. [Download the Free Academic Edition here](https://www.aimms.com/english/developers/downloads/free-academic-license/) if you are a student.
+- **SQLite ODBC Driver:** This project uses a database for data persistence. Ensure you have the [SQLite ODBC Driver installed](https://how-to.aimms.com/Articles/118/118-Connect-SQLite.html).
+- **WebUI:** This project features a complex custom page layout using CSS Grid and advanced UI styling.
+
+### Technical Highlights
+- **Constraint Programming (CP):** Uses the AIMMS CP Optimizer to handle logical "if-then" constraints and channel constraints.
+- **Multiple Solutions:** Configured to return up to 1000 different stable pairings using `solution_storage_limit`.
+- **DirectSQL:** Demonstrates how to use `DirectSQL` procedures to export the resulting pairings directly to a database.
+
+## 🚀 Getting Started
+
+1. **Download the Release:** Go to the [Releases](https://github.com/aimms/reindeer-pairing/releases) page and download the `.zip` file from the latest version.
+2. **Open the Project:** Launch the `.aimms` file.
+3. **Run the Model:** Use the WebUI workflow to solve the pairings and explore different stable configurations.
+
+## 🤝 Support & Feedback
+
+This example is maintained by the **AIMMS User Support Team**.
+- Found an issue? [Open an issue](https://github.com/aimms/reindeer-pairing/issues).
+- Questions? Reach out via the [AIMMS Community](https://community.aimms.com).
+
+---
+*Maintained by the AIMMS User Support Team. We optimize the way you build optimization.*
