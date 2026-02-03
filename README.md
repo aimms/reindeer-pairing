@@ -18,10 +18,10 @@ The stable marriage problem is a classic optimization challenge in matching theo
 
 To get the most out of this model, we highly recommend reading our detailed step-by-step guide on the AIMMS How-to website:
 
-👉 **[Read the Full Article: Reindeer Pairing Guide](https://how-to.aimms.com/Articles/1370/reindeer-pairing.html)**
+👉 **[Read the Full Article: Reindeer Pairing Guide](https://how-to.aimms.com/Articles/434/434-reindeer-pairing.html)**
 
 ### Prerequisites
-- **AIMMS:** You will need AIMMS installed to run the model. [Download the Free Academic Edition here](https://www.aimms.com/english/developers/downloads/free-academic-license/) if you are a student.
+- **AIMMS:** You will need AIMMS installed to run the model. [Download the Free Academic Edition here](https://www.aimms.com/support/licensing/) if you are a student.
 - **SQLite ODBC Driver:** This project uses a database for data persistence. Ensure you have the [SQLite ODBC Driver installed](https://how-to.aimms.com/Articles/118/118-Connect-SQLite.html).
 - **WebUI:** This project features a complex custom page layout using CSS Grid and advanced UI styling.
 
