@@ -12,6 +12,7 @@ Model Main_ReindeerPairing {
 		Stable marriage problem, network object, constraint programming, channel constraint, if-then constraint."
 	}
 	Section Data_Model {
+		Comment: "Model grouping for all data declarations.";
 		Section Quantities_and_Units {
 			Comment: {
 				"This section contains all the units and quantities that are added automatically by AIMMS.
@@ -30,9 +31,11 @@ Model Main_ReindeerPairing {
 			}
 		}
 		Section Inputs {
+			Comment: "Declarations for input data sets and parameters.";
 			Set s_reindeers {
 				Index: i_deer;
 				Definition: s_leftys + s_rightys + 'Rudolph';
+				Comment: "Set of all reindeers.";
 			}
 			Set s_leftys {
 				SubsetOf: s_reindeers;
@@ -45,6 +48,7 @@ Model Main_ReindeerPairing {
 				SubsetOf: s_reindeers;
 				Index: i_right;
 				Definition: data { Dancer, Vixen, Cupid, Blitzen };
+				Comment: "Set of right side reindeers.";
 			}
 			Set s_leftReindeerForHisRight {
 				IndexDomain: (i_left);
@@ -83,6 +87,7 @@ Model Main_ReindeerPairing {
 			Parameter p_def_preferenceRankRighty {
 				IndexDomain: (i_right,i_left);
 				Definition: ord(i_left, s_rightReindeerForHisLeft(i_right));
+				Comment: "An intermediate parameter ranking the preferences for right reindeers.";
 			}
 			StringParameter sp_def_imageReference {
 				IndexDomain: i_deer;
@@ -92,10 +97,13 @@ Model Main_ReindeerPairing {
 					  Dancer  : "dancer.png" ,  Vixen   : "vixen.png"  ,  Cupid   : "cupid.png"  ,  Blitzen : "blitzen.png",
 					  Rudolph : "rudolph.png" }
 				}
+				Comment: "Image filename mapping for each reindeer.";
 			}
 		}
 		Section Math_Model {
+			Comment: "Section for all variables, constraints, and mathematical programming definitions.";
 			Procedure pr_solveReindeerPairing {
+				Comment: "Solves the Reindeer Pairing model by generating solutions and parsing them.";
 				Body: {
 					! Call the CP solver to find all possible solutions and store them in the
 					! solution repository of the generated mathematical program 'mp_stableReindeerPairings'
@@ -131,10 +139,12 @@ Model Main_ReindeerPairing {
 				}
 				ElementParameter ep_loc_generatedModel {
 					Range: AllGeneratedMathematicalPrograms;
+					Comment: "Local parameter pointing to the mathematical program.";
 				}
 			}
 			Variable v_objectiveFunction {
 				Range: free;
+				Comment: "Objective function variable for solver compatibility.";
 			}
 			ElementVariable ev_rightPartner {
 				IndexDomain: (i_left);
@@ -144,6 +154,7 @@ Model Main_ReindeerPairing {
 			ElementVariable ev_leftPartner {
 				IndexDomain: (i_right);
 				Range: s_leftys;
+				Comment: "For each reindeer on the right, which reindeer on the left will it be pulling the sleigh next to.";
 			}
 			Constraint c_matchEachUniquely {
 				Definition: {
@@ -188,39 +199,54 @@ Model Main_ReindeerPairing {
 					   p_def_preferenceRankLefty( i_left, ev_rightPartner( i_left ) ) < p_def_preferenceRankLefty( i_left, i_right )
 					endif
 				}
+				Comment: "Right stable marriage condition.";
 			}
 			MathematicalProgram mp_stableReindeerPairings {
 				Direction: minimize;
 				Constraints: AllConstraints;
 				Variables: AllVariables;
 				Type: Automatic;
+				Comment: "Mathematical program minimizing the pairings.";
 			}
 		}
 		Section Outputs {
+			Comment: "Definitions to store and represent solutions.";
 			Set s_solutionSet {
 				SubsetOf: Integers;
 				Index: i_sols;
+				Comment: "Set of integer solution indices.";
 			}
 			ElementParameter ep_variousLeftPartners {
 				IndexDomain: (i_sols,i_right);
 				Range: s_leftys;
 				webui::FlagsIdentifier: sp_readOnlyFlag;
+				Comment: "Left partner variations across all stored solutions.";
 			}
 			ElementParameter ep_variousRightPartners {
 				IndexDomain: (i_sols,i_left);
 				Range: s_rightys;
 				webui::FlagsIdentifier: sp_readOnlyFlag;
+				Comment: "Right partner variations across all stored solutions.";
 			}
 		}
 	}
 	Section UI_Declarations {
-		Procedure pr_empty;
+		Comment: "WebUI definitions and declarations.";
+		Procedure pr_empty {
+			Body: {
+				! Empty procedure for UI
+			}
+			Comment: "Empty procedure for UI purposes.";
+		}
 		StringParameter sp_logo {
 			InitialData: "aimms_logo.png";
+			Comment: "Logo image for the UI.";
 		}
 		Section Workflow {
+			Comment: "Definitions configuring the workflow steps.";
 			StringParameter sp_myWorkflows {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
+				Comment: "Workflows structure declaration.";
 			}
 			StringParameter sp_myWorkflowSteps {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
@@ -237,11 +263,15 @@ Model Main_ReindeerPairing {
 					  ( 1, 3, tooltip           ) : "Pairing results"    ,  ( 1, 3, workflowPageState ) : "active"             ,
 					  ( 1, 3, pageDataState     ) : "Incomplete"         ,  ( 1, 3, redirectPageId    ) : "home"                }
 				}
+				Comment: "Specific workflow pages setup.";
 			}
 		}
 		Section Pages {
+			Comment: "WebUI pages grouping.";
 			Section Pairing_Pages {
+				Comment: "Group of pages for pairings.";
 				Procedure pr_changeImages {
+					Comment: "Procedure to change images when a solution changes.";
 					Body: {
 						! top are left and bottom are right
 						ep_left := first(i_left);
@@ -266,25 +296,47 @@ Model Main_ReindeerPairing {
 				}
 				Parameter p_numberOfSolutions {
 					Definition: card(s_solutionSet);
+					Comment: "Number of total stable pairing solutions.";
 				}
 				ElementParameter ep_viewedSolution {
 					Range: s_solutionSet;
 					InitialData: '';
 					webui::UponChangeProcedure: pr_changeImages;
+					Comment: "The currently selected solution viewed in the WebUI.";
 				}
 				StringParameter sp_santa {
 					Definition: "santa_inv.png";
+					Comment: "Image for Santa.";
 				}
-				StringParameter sp_1Top;
-				StringParameter sp_1Bottom;
-				StringParameter sp_2Top;
-				StringParameter sp_2Bottom;
-				StringParameter sp_3Top;
-				StringParameter sp_3Bottom;
-				StringParameter sp_4Top;
-				StringParameter sp_4Bottom;
-				StringParameter sp_5;
+				StringParameter sp_1Top {
+					Comment: "Image 1 top.";
+				}
+				StringParameter sp_1Bottom {
+					Comment: "Image 1 bottom.";
+				}
+				StringParameter sp_2Top {
+					Comment: "Image 2 top.";
+				}
+				StringParameter sp_2Bottom {
+					Comment: "Image 2 bottom.";
+				}
+				StringParameter sp_3Top {
+					Comment: "Image 3 top.";
+				}
+				StringParameter sp_3Bottom {
+					Comment: "Image 3 bottom.";
+				}
+				StringParameter sp_4Top {
+					Comment: "Image 4 top.";
+				}
+				StringParameter sp_4Bottom {
+					Comment: "Image 4 bottom.";
+				}
+				StringParameter sp_5 {
+					Comment: "Image 5 Rudolph.";
+				}
 				DeclarationSection Pairing_Widget_Action {
+					Comment: "Widget actions declarations.";
 					StringParameter sp_pairingWidgetActions {
 						IndexDomain: (webui::indexPageExtension,webui::indexWidgetActionSpec);
 						Definition: {
@@ -292,10 +344,13 @@ Model Main_ReindeerPairing {
 							{ ( 1, displaytext ) : "Fill SQL Table" ,  ( 1, icon        ) : "aimms-database-export"   ,  ( 1, procedure   ) : "pr_fillDatabase",
 							  ( 1, state       ) : "active"          }
 						}
+						Comment: "Widget actions configuration.";
 					}
 				}
 				Section DirectSQL_Export {
+					Comment: "SQL Export definitions and logic.";
 					Procedure pr_fillDatabase {
+						Comment: "Fills the SQLite database with pairing results.";
 						Body: {
 							sp_loc_datasource
 							:=  SQLCreateConnectionString (
@@ -319,26 +374,41 @@ Model Main_ReindeerPairing {
 							    DirectSQL(sp_loc_datasource, sp_loc_insertCommand);
 							endfor ;
 						}
-						StringParameter sp_loc_insertCommand;
-						StringParameter sp_loc_datasource;
+						StringParameter sp_loc_insertCommand {
+							Comment: "Local insert command string.";
+						}
+						StringParameter sp_loc_datasource {
+							Comment: "Local data source connection string.";
+						}
 					}
 				}
 			}
 		}
 		Section FlagsIdentifier {
+			Comment: "Flags section for WebUI.";
 			StringParameter sp_readOnlyFlag {
 				Definition: "readonly";
+				Comment: "Read only flag literal.";
 			}
 		}
 	}
-	Procedure MainInitialization;
-	Procedure MainExecution {
+	Procedure MainInitialization {
+		Comment: "Model Initialization procedure.";
 		Body: {
+			! Initializes the model.
+		}
+	}
+	Procedure MainExecution {
+		Comment: "Model Execution procedure.";
+		Body: {
+			! Calls the solve procedure
 			pr_solveReindeerPairing;
 		}
 	}
 	Procedure MainTermination {
+		Comment: "Model Termination procedure.";
 		Body: {
+			! Terminates the execution successfully
 			return 1;
 		}
 	}
