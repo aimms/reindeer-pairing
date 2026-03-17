@@ -1,7 +1,7 @@
 # Reindeer Pairing 
 
 [![Downloads](https://img.shields.io/github/downloads/aimms/reindeer-pairing/total?style=for-the-badge&logo=github&labelColor=000081&color=1847c9)](https://github.com/aimms/reindeer-pairing/releases)
-![AIMMS Version](https://img.shields.io/badge/AIMMS-24.5-white?style=for-the-badge&labelColor=009B00&color=00D400)
+![AIMMS Version](https://img.shields.io/badge/AIMMS-25.9-white?style=for-the-badge&labelColor=009B00&color=00D400)
 ![WebUI Version](https://img.shields.io/badge/WebUI-24.10.3.3-white?style=for-the-badge&labelColor=009B00&color=00D400)
 
 
